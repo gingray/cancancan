@@ -1,9 +1,15 @@
 require "spec_helper"
 
-describe "be_able_to" do
+describe "be_able_to", focus: true do
   it "delegates to can?" do
     expect(object = double).to receive(:can?).with(:read, 123) { true }
     expect(object).to be_able_to(:read, 123)
+  end
+
+  it "delegates to can? with array of abilities" do
+    expect(object = double).to receive(:can?).with(:read, 123) { true }
+    expect(object).to receive(:can?).with(:update, 123) { true }
+    expect(object).to be_able_to([:read, :update], 123)
   end
 
   it "reports a nice failure message for should" do

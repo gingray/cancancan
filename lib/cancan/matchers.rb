@@ -1,5 +1,4 @@
 rspec_module = defined?(RSpec::Core) ? 'RSpec' : 'Spec' # RSpec 1 compatability
-
 if rspec_module == 'RSpec'
   require 'rspec/core'
   require 'rspec/expectations'
@@ -9,7 +8,12 @@ end
 
 Kernel.const_get(rspec_module)::Matchers.define :be_able_to do |*args|
   match do |ability|
-    ability.can?(*args)
+    actions = args.first
+    if actions.kind_of? Array
+      actions.all? { |action| ability.can? *[action, *args[1..-1]] }
+    else
+      ability.can?(*args)
+    end
   end
 
   # Check that RSpec is < 2.99
